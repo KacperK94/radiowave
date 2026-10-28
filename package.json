@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "convex codegen && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "convex codegen && tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "convex": "^1.25.4",
