@@ -15,18 +15,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-      - name: Install dependencies
-        run: npm install
-      - name: Deploy Convex functions
+      - name: Check deployment credentials
+        id: credentials
         env:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
         run: |
-          if [ -z "$CONVEX_DEPLOY_KEY" ]; then
-            echo "::notice::Convex deployment skipped. Add CONVEX_DEPLOY_KEY in GitHub repository Actions secrets to enable backend deployment."
-            exit 0
+          if [ -n "$CONVEX_DEPLOY_KEY" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Convex deployment skipped. Add CONVEX_DEPLOY_KEY in repository Actions secrets to enable it."
           fi
-          npx convex deploy --cmd 'npm run build'
+      - uses: actions/setup-node@v4
+        if: steps.credentials.outputs.configured == 'true'
+        with:
+          node-version: 20
+      - name: Install dependencies
+        if: steps.credentials.outputs.configured == 'true'
+        run: npm install
+      - name: Deploy Convex functions
+        if: steps.credentials.outputs.configured == 'true'
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: npx convex deploy --cmd 'npm run build'
