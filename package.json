@@ -4,13 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "convex codegen && next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "convex codegen && tsc --noEmit"
   },
   "dependencies": {
-    "@radix-ui/react-icons": "^1.3.2",
     "convex": "^1.25.4",
     "lucide-react": "^0.468.0",
     "next": "^15.1.6",
