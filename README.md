@@ -40,7 +40,9 @@ The Convex CLI generates `convex/_generated` for the backend functions.
 
 ## Deployment
 
-Import `KacperK94/radiowave` into Vercel and set `NEXT_PUBLIC_CONVEX_URL` to the URL of the existing Convex deployment. Deploying the frontend does not automatically configure Convex environment variables.
+The repository is linked to Vercel. The `NEXT_PUBLIC_CONVEX_URL` environment variable is configured for Production, Preview, and Development using the existing Convex URL. Pushes to `main` trigger frontend deployments.
+
+To deploy Convex backend functions automatically, add a repository Actions secret named `CONVEX_DEPLOY_KEY` in GitHub (`Settings → Secrets and variables → Actions`). The included workflow deploys the schema and functions on changes under `convex/`. The deploy key is sensitive; never commit it or paste it into chat. Without that secret, the workflow deliberately skips backend deployment.
 
 ## Important MVP notes
 
