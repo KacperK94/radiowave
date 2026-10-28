@@ -1,0 +1,32 @@
+name: Deploy Convex backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "convex/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy-convex.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm install
+      - name: Deploy Convex functions
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: |
+          if [ -z "$CONVEX_DEPLOY_KEY" ]; then
+            echo "::notice::Convex deployment skipped. Add CONVEX_DEPLOY_KEY in GitHub repository Actions secrets to enable backend deployment."
+            exit 0
+          fi
+          npx convex deploy --cmd 'npm run build'
