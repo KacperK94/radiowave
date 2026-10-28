@@ -1,11 +1,12 @@
 /* eslint-disable */
 /**
  * Generated API bindings for the RadioWave Convex modules.
- * Keep this file in source control so frontend builds do not need deployment credentials.
+ * Kept in source control so frontend builds do not need deployment credentials.
  */
+import { anyApi } from "convex/server";
 import type * as shoutbox from "../shoutbox";
 import type { ApiFromModules, FilterApi, FunctionReference } from "convex/server";
 
-declare const fullApi: ApiFromModules<{ shoutbox: typeof shoutbox }>;
-export declare const api: FilterApi<typeof fullApi, FunctionReference<any, "public">>;
-export declare const internal: FilterApi<typeof fullApi, FunctionReference<any, "internal">>;
+const fullApi = anyApi as ApiFromModules<{ shoutbox: typeof shoutbox }>;
+export const api = anyApi as FilterApi<typeof fullApi, FunctionReference<any, "public">>;
+export const internal = anyApi as FilterApi<typeof fullApi, FunctionReference<any, "internal">>;
