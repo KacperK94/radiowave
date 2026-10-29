@@ -83,6 +83,7 @@ export default function RadioWaveApp({ backendEnabled }: { backendEnabled: boole
   const [nicknameInput, setNicknameInput] = useState("RadioFan");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [adminOpen, setAdminOpen] = useState(false);
+  const [panelSection, setPanelSection] = useState<"shoutbox" | "login" | "register" | "profile" | "stations">("shoutbox");
   const [newName, setNewName] = useState("");
   const [newGenre, setNewGenre] = useState("Rock / Alternative");
   const [newUrl, setNewUrl] = useState("");
@@ -224,7 +225,7 @@ export default function RadioWaveApp({ backendEnabled }: { backendEnabled: boole
         <header className="nav">
           <a href="#" className="brand" aria-label="RadioWave — strona główna"><span className="brand-mark"><Radio size={23} /></span><span>Radio<em>Wave</em></span></a>
           <nav className="nav-links" aria-label="Nawigacja główna"><a href="#stations">STACJE</a><a href="#community">SPOŁECZNOŚĆ</a><a href="#profile">PROFIL</a></nav>
-          <button className="secondary" onClick={() => setAdminOpen((open) => !open)}><Settings2 size={15} /> Panel</button>
+          <button className="secondary" aria-expanded={adminOpen} aria-controls="radiowave-drawer" onClick={() => setAdminOpen((open) => !open)}><Settings2 size={15} /> Panel</button>
         </header>
 
         <main>
@@ -278,18 +279,20 @@ export default function RadioWaveApp({ backendEnabled }: { backendEnabled: boole
             </section>
           </section>
 
-          {adminOpen && <section className="panel" id="admin" style={{ marginBottom: 28 }}>
-            <div className="panel-head"><div><div className="eyebrow">Narzędzia witryny</div><h2>Panel stacji <span style={{ color: "var(--red)" }}>//</span></h2></div><button className="icon-btn" onClick={() => setAdminOpen(false)} aria-label="Zamknij panel"><X size={17} /></button></div>
-            <p className="muted" style={{ fontSize: 13, lineHeight: 1.6 }}>Dodawaj i usuwaj stacje zapisane lokalnie w tej przeglądarce. To wersja demonstracyjna — nie jest to jeszcze zabezpieczony panel administratora.</p>
-            <form onSubmit={addStation} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 10, margin: "16px 0" }}>
-              <input className="field" value={newName} onChange={(event) => setNewName(event.target.value)} placeholder="Nazwa stacji" aria-label="Nazwa stacji" maxLength={50} required />
-              <input className="field" value={newGenre} onChange={(event) => setNewGenre(event.target.value)} placeholder="Gatunek" aria-label="Gatunek" maxLength={60} />
-              <input className="field" value={newUrl} onChange={(event) => setNewUrl(event.target.value)} placeholder="https://… adres strumienia" aria-label="Adres strumienia" type="url" required />
-              <button className="primary"><Radio size={15} /> Dodaj stację</button>
-            </form>
-            {stationNotice && <p className="notice" role="status">{stationNotice}</p>}
-            {customStations.length > 0 && <div className="chat-list">{customStations.map((station) => <div className="chat-message" key={station.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}><div><strong>{station.name}</strong><p>{station.genre}</p></div><button className="secondary" onClick={() => removeStation(station.id)}>Usuń</button></div>)}</div>}
-            <p className="notice">Docelowo ten obszar wymaga logowania administratora i autoryzacji po stronie serwera przed publicznym wdrożeniem.</p>
+          {adminOpen && <section className="panel account-drawer" id="radiowave-drawer" aria-label="Panel RadioWave" style={{ margin: "20px 0 28px" }}>
+            <div className="panel-head"><div><div className="eyebrow">Szybki dostęp</div><h2>Panel RadioWave <span style={{ color: "var(--red)" }}>//</span></h2></div><button className="icon-btn" onClick={() => setAdminOpen(false)} aria-label="Zamknij panel"><X size={17} /></button></div>
+            <nav className="drawer-tabs" aria-label="Sekcje panelu">
+              <button className={panelSection === "shoutbox" ? "drawer-tab active" : "drawer-tab"} onClick={() => setPanelSection("shoutbox")}>Shoutbox</button>
+              <button className={panelSection === "login" ? "drawer-tab active" : "drawer-tab"} onClick={() => { setStationNotice(""); setPanelSection("login"); }}>Logowanie</button>
+              <button className={panelSection === "register" ? "drawer-tab active" : "drawer-tab"} onClick={() => { setStationNotice(""); setPanelSection("register"); }}>Rejestracja</button>
+              <button className={panelSection === "profile" ? "drawer-tab active" : "drawer-tab"} onClick={() => setPanelSection("profile")}>Profil</button>
+              <button className={panelSection === "stations" ? "drawer-tab active" : "drawer-tab"} onClick={() => setPanelSection("stations")}>Stacje</button>
+            </nav>
+            {panelSection === "shoutbox" && (backendEnabled ? <Shoutbox nickname={nickname} /> : <ShoutboxOffline />)}
+            {panelSection === "login" && <div className="drawer-content"><div className="eyebrow">Witaj ponownie</div><h3>Logowanie</h3><p className="muted">Interfejs logowania — wymaga jeszcze podłączenia systemu kont w backendzie.</p><form onSubmit={(event) => { event.preventDefault(); setStationNotice("Logowanie nie jest jeszcze podłączone do backendu. Formularz nie wysłał danych."); }} className="drawer-form"><label>Email<input className="field" type="email" autoComplete="email" placeholder="ty@example.com" required /></label><label>Hasło<input className="field" type="password" autoComplete="current-password" placeholder="Twoje hasło" required /></label><button className="primary" type="submit">Zaloguj się</button></form>{stationNotice && <p className="notice" role="status">{stationNotice}</p>}<button className="text-link" onClick={() => { setStationNotice(""); setPanelSection("register"); }}>Nie masz konta? Przejdź do rejestracji</button></div>}
+            {panelSection === "register" && <div className="drawer-content"><div className="eyebrow">Dołącz do społeczności</div><h3>Utwórz konto</h3><p className="muted">Formularz demonstracyjny. Rejestracja zacznie działać po wdrożeniu backendu kont, walidacji i bezpiecznego przechowywania haseł.</p><form onSubmit={(event) => { event.preventDefault(); setStationNotice("Rejestracja nie jest jeszcze podłączona do backendu. Konto nie zostało utworzone."); }} className="drawer-form"><label>Nick<input className="field" autoComplete="nickname" maxLength={24} placeholder="Jak mamy Cię nazywać?" required /></label><label>Email<input className="field" type="email" autoComplete="email" placeholder="ty@example.com" required /></label><label>Hasło<input className="field" type="password" autoComplete="new-password" minLength={8} placeholder="Minimum 8 znaków" required /></label><button className="primary" type="submit">Utwórz konto</button></form>{stationNotice && <p className="notice" role="status">{stationNotice}</p>}<button className="text-link" onClick={() => { setStationNotice(""); setPanelSection("login"); }}>Masz już konto? Zaloguj się</button></div>}
+            {panelSection === "profile" && <div className="drawer-content"><div className="eyebrow">Twoje miejsce w sieci</div><h3>Profil: {nickname}</h3><form className="profile-form" onSubmit={saveNickname}><input className="field" value={nicknameInput} maxLength={24} onChange={(event) => setNicknameInput(event.target.value)} aria-label="Twój nick" placeholder="Wpisz nick" /><button className="secondary">Zapisz nick</button></form><p className="muted">Na razie nick i ulubione zapisują się lokalnie w tej przeglądarce, a nie na koncie online.</p></div>}
+            {panelSection === "stations" && <div className="drawer-content"><div className="eyebrow">Narzędzia witryny</div><h3>Panel stacji</h3><p className="muted">Dodawaj i usuwaj stacje zapisane lokalnie w tej przeglądarce. To nie jest zabezpieczony panel administratora.</p><form onSubmit={addStation} className="drawer-form"><label>Nazwa stacji<input className="field" value={newName} onChange={(event) => setNewName(event.target.value)} placeholder="Nazwa stacji" maxLength={50} required /></label><label>Gatunek<input className="field" value={newGenre} onChange={(event) => setNewGenre(event.target.value)} placeholder="Gatunek" maxLength={60} /></label><label>Adres strumienia<input className="field" value={newUrl} onChange={(event) => setNewUrl(event.target.value)} placeholder="https://…" type="url" required /></label><button className="primary"><Radio size={15} /> Dodaj stację</button></form>{stationNotice && <p className="notice" role="status">{stationNotice}</p>}{customStations.map((station) => <div className="chat-message drawer-station" key={station.id}><div><strong>{station.name}</strong><p>{station.genre}</p></div><button className="secondary" onClick={() => removeStation(station.id)}>Usuń</button></div>)}</div>}
           </section>}
         </main>
 
