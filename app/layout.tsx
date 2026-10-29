@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
+import { JoinLink } from "./JoinLink";
 
 export const metadata: Metadata = {
   title: "RadioWave — Twoje radio. Twoja scena.",
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pl">
-      <body><ConvexClientProvider>{children}</ConvexClientProvider></body>
+      <body><ConvexClientProvider><JoinLink />{children}</ConvexClientProvider></body>
     </html>
   );
 }
