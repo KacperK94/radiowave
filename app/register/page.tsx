@@ -1,5 +1,6 @@
 "use client";
 
+import "./register.css";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { ArrowLeft, Headphones, Radio, UserRoundPlus } from "lucide-react";
@@ -15,7 +16,6 @@ export default function RegisterPage() {
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setNotice("");
-
     if (nickname.trim().length < 3) {
       setNotice("Nick musi mieć co najmniej 3 znaki.");
       setNoticeType("error");
@@ -31,7 +31,6 @@ export default function RegisterPage() {
       setNoticeType("error");
       return;
     }
-
     setNotice("Ekran jest gotowy, ale rejestracja nie jest jeszcze podłączona do systemu kont. Konto nie zostało utworzone.");
     setNoticeType("info");
   }
@@ -40,14 +39,10 @@ export default function RegisterPage() {
     <main className="register-page">
       <section className="register-card" aria-labelledby="register-title">
         <Link href="/" className="register-back"><ArrowLeft size={16} /> Wróć do radia</Link>
-        <div className="register-brand">
-          <span className="register-brand-icon"><Radio size={25} /></span>
-          <span>Radio<em>Wave</em></span>
-        </div>
+        <div className="register-brand"><span className="register-brand-icon"><Radio size={25} /></span><span>Radio<em>Wave</em></span></div>
         <div className="register-eyebrow"><Headphones size={14} /> TWOJA MUZYKA. TWOJA SPOŁECZNOŚĆ.</div>
         <h1 id="register-title">Dołącz do<br /><span>swojej fali.</span></h1>
         <p className="register-intro">Stwórz profil słuchacza, zbieraj ulubione stacje i dołącz do rozmów z innymi fanami radia.</p>
-
         <form className="register-form" onSubmit={submit}>
           <label htmlFor="register-nickname">Nick</label>
           <input id="register-nickname" name="nickname" autoComplete="nickname" minLength={3} maxLength={24} required value={nickname} onChange={(event) => setNickname(event.target.value)} placeholder="np. RadioFan" />
@@ -59,14 +54,12 @@ export default function RegisterPage() {
           <input id="register-confirm-password" name="confirmPassword" type="password" autoComplete="new-password" minLength={8} required value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Wpisz hasło ponownie" />
           <button className="register-submit" type="submit"><UserRoundPlus size={17} /> Utwórz konto</button>
         </form>
-
         {notice && <p className={noticeType === "info" ? "register-notice register-notice-info" : "register-notice"} role="status">{notice}</p>}
         <p className="register-legal">Tworząc konto, akceptujesz zasady społeczności RadioWave. Nie wysyłamy formularza do serwera w tej wersji.</p>
         <div className="register-footer"><span className="register-signal" /> Radio gra. Społeczność rośnie.</div>
       </section>
       <aside className="register-side" aria-label="Informacje o RadioWave">
-        <div className="register-orbit register-orbit-one" />
-        <div className="register-orbit register-orbit-two" />
+        <div className="register-orbit register-orbit-one" /><div className="register-orbit register-orbit-two" />
         <div className="register-side-content">
           <div className="register-side-mark"><Radio size={31} /></div>
           <p className="register-side-kicker">NIE SZUKAJ SZUMU.</p>
