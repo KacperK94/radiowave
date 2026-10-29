@@ -268,16 +268,6 @@ export default function RadioWaveApp({ backendEnabled }: { backendEnabled: boole
             </div>
           </section>
 
-          <section className="content-grid" id="community">
-            {backendEnabled ? <Shoutbox nickname={nickname} /> : <ShoutboxOffline />}
-            <section className="panel" id="profile">
-              <div className="eyebrow">Twoje miejsce w sieci</div><h2>Twój profil <span style={{ color: "var(--red)" }}>//</span></h2><p className="muted" style={{ fontSize: 13, lineHeight: 1.6, marginBottom: 18 }}>Ustaw swój nick i wracaj do ulubionych stacji. Profil w tej wersji zapisuje się w tej przeglądarce.</p>
-              <div className="profile-box"><div className="avatar">{nickname.slice(0, 1).toUpperCase()}</div><div style={{ minWidth: 0 }}><strong>{nickname}</strong><small><Disc3 size={12} style={{ display: "inline", verticalAlign: "middle" }} /> Słuchacz RadioWave</small></div></div>
-              <form className="profile-form" onSubmit={saveNickname}><input className="field" value={nicknameInput} maxLength={24} onChange={(event) => setNicknameInput(event.target.value)} aria-label="Twój nick" placeholder="Wpisz nick" /><button className="secondary">Zapisz nick</button></form>
-              <div style={{ marginTop: 22 }}><div className="eyebrow">Twoje ulubione</div><p style={{ fontSize: 13, margin: "8px 0", color: "#d6d6df" }}>{favorites.length ? favorites.map((id) => allStations.find((station) => station.id === id)?.name).filter(Boolean).join(" · ") : "Kliknij serduszko przy stacji, aby dodać ją do ulubionych."}</p></div>
-              <div className="admin-grid" style={{ marginTop: 20 }}><div className="admin-tile"><strong>{allStations.length}</strong><span>Dostępne stacje</span></div><div className="admin-tile"><strong>{favorites.length}</strong><span>Ulubione stacje</span></div></div>
-            </section>
-          </section>
 
           {adminOpen && <section className="panel account-drawer" id="radiowave-drawer" aria-label="Panel RadioWave" style={{ margin: "20px 0 28px" }}>
             <div className="panel-head"><div><div className="eyebrow">Szybki dostęp</div><h2>Panel RadioWave <span style={{ color: "var(--red)" }}>//</span></h2></div><button className="icon-btn" onClick={() => setAdminOpen(false)} aria-label="Zamknij panel"><X size={17} /></button></div>
