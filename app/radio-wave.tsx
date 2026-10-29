@@ -88,6 +88,11 @@ export default function RadioWaveApp({ backendEnabled }: { backendEnabled: boole
   const [newUrl, setNewUrl] = useState("");
   const [stationNotice, setStationNotice] = useState("");
   const [customStations, setCustomStations] = useState<Station[]>([]);
+  const [remoteStations, setRemoteStations] = useState<Station[]>([]);
+  const [catalogQuery, setCatalogQuery] = useState("");
+  const [genreFilter, setGenreFilter] = useState("");
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [catalogError, setCatalogError] = useState("");
 
   useEffect(() => {
     try {
@@ -100,7 +105,49 @@ export default function RadioWaveApp({ backendEnabled }: { backendEnabled: boole
     } catch { /* Ignore invalid browser-local preferences. */ }
   }, []);
 
-  const allStations = useMemo(() => [...stations, ...customStations], [stations, customStations]);
+  useEffect(() => {
+    let cancelled = false;
+    const controller = new AbortController();
+    const timer = window.setTimeout(async () => {
+      setCatalogLoading(true);
+      setCatalogError("");
+      try {
+        const params = new URLSearchParams();
+        if (catalogQuery.trim()) params.set("q", catalogQuery.trim());
+        if (genreFilter.trim()) params.set("genre", genreFilter.trim());
+        const response = await fetch(`/api/stations?${params.toString()}`, { signal: controller.signal });
+        if (!response.ok) throw new Error("Katalog stacji jest chwilowo niedostępny.");
+        const data = await response.json() as { stations?: Station[] };
+        if (!cancelled) setRemoteStations(Array.isArray(data.stations) ? data.stations : []);
+      } catch (error) {
+        if (!cancelled && !(error instanceof DOMException && error.name === "AbortError")) {
+          setCatalogError("Nie udało się pobrać katalogu. Pokazuję dostępne stacje zapisane w aplikacji.");
+        }
+      } finally {
+        if (!cancelled) setCatalogLoading(false);
+      }
+    }, catalogQuery.trim() || genreFilter.trim() ? 250 : 0);
+    return () => { cancelled = true; window.clearTimeout(timer); controller.abort(); };
+  }, [catalogQuery, genreFilter]);
+
+  const allStations = useMemo(() => {
+    const seen = new Set<string>();
+    return [...stations, ...remoteStations, ...customStations].filter((station) => {
+      const key = station.streamUrl || station.name.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [stations, remoteStations, customStations]);
+  const visibleStations = useMemo(() => {
+    const query = catalogQuery.trim().toLowerCase();
+    const genre = genreFilter.trim().toLowerCase();
+    return allStations.filter((station) => {
+      const matchesQuery = !query || `${station.name} ${station.genre} ${station.tagline}`.toLowerCase().includes(query);
+      const matchesGenre = !genre || station.genre.toLowerCase().includes(genre);
+      return matchesQuery && matchesGenre;
+    });
+  }, [allStations, catalogQuery, genreFilter]);
   const current = allStations.find((station) => station.id === currentId) ?? allStations[0];
 
   useEffect(() => {
@@ -204,9 +251,14 @@ export default function RadioWaveApp({ backendEnabled }: { backendEnabled: boole
           {playError && <p className="notice" role="status">{playError}</p>}
 
           <section id="stations">
-            <div className="section-head"><div><div className="eyebrow">Znajdź swoją częstotliwość</div><h2>Na antenie <span style={{ color: "var(--red)" }}>//</span></h2></div><span className="tag">{allStations.length} STACJE</span></div>
+            <div className="section-head"><div><div className="eyebrow">Katalog internetowych stacji radiowych</div><h2>Na antenie <span style={{ color: "var(--red)" }}>//</span></h2></div><span className="tag">{visibleStations.length} STACJI{catalogLoading ? " · ŁADOWANIE" : ""}</span></div>
+            <div className="catalog-controls" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 10, margin: "0 0 18px" }}>
+              <input className="field" value={catalogQuery} onChange={(event) => setCatalogQuery(event.target.value)} placeholder="Szukaj stacji, np. rock, jazz, chill…" aria-label="Szukaj stacji radiowych" />
+              <input className="field" value={genreFilter} onChange={(event) => setGenreFilter(event.target.value)} placeholder="Filtruj gatunek, np. metal" aria-label="Filtruj stacje według gatunku" />
+            </div>
+            {catalogError && <p className="notice" role="status">{catalogError}</p>}
             <div className="station-grid">
-              {allStations.map((station, index) => <article className="station-card" key={station.id}>
+              {visibleStations.map((station, index) => <article className="station-card" key={station.id}>
                 <div className="station-art"><div style={{ position: "absolute", top: 12, left: 12 }} className="tag">{index === 0 ? "CHILL MODE" : index === 1 ? "FRESH FINDS" : "LOUD & PROUD"}</div>{index % 3 === 0 ? <Waves size={46} strokeWidth={1.3} /> : index % 3 === 1 ? <AudioLines size={46} strokeWidth={1.3} /> : <Music2 size={46} strokeWidth={1.3} />}</div>
                 <div className="station-meta"><div><h3>{station.name}</h3><p>{station.genre}</p></div><button className="icon-btn" onClick={() => toggleFavorite(station.id)} aria-label={favorites.includes(station.id) ? "Usuń z ulubionych" : "Dodaj do ulubionych"} style={{ color: favorites.includes(station.id) ? "var(--red)" : "#9999a6" }}><Heart size={17} fill={favorites.includes(station.id) ? "currentColor" : "none"} /></button></div>
                 <p className="muted" style={{ fontSize: 12, lineHeight: 1.55, margin: 0 }}>{station.tagline}</p>
