@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { action, internalMutation, query } from "./_generated/server";
+import { internalAction, internalMutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 
 const MIRRORS = [
@@ -174,7 +174,7 @@ export const upsertBatch = internalMutation({
   },
 });
 
-export const syncTopStations = action({
+export const syncTopStations = internalAction({
   args: {},
   handler: async (ctx) => {
     const now = Date.now();
