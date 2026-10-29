@@ -92,3 +92,16 @@ a{color:inherit;text-decoration:none}
 .empty{padding:24px;text-align:center;color:var(--muted);font-size:13px}
 @media(max-width:800px){.hero{grid-template-columns:1fr;gap:8px;padding-top:38px}.record-stage{min-height:260px}.station-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.content-grid{grid-template-columns:1fr}.nav-links{display:none}.hero h1{letter-spacing:-2.5px}}
 @media(max-width:500px){.shell{padding:0 15px}.nav{padding:16px 0}.brand{font-size:21px}.hero{padding:35px 0 25px}.hero h1{font-size:46px}.station-grid{grid-template-columns:1fr}.station-art{height:145px}.playerbar{gap:10px;padding:12px}.player-controls{gap:5px}.player-controls .secondary{padding:10px}.section-head h2{font-size:22px}.panel{padding:17px}.chat-form,.profile-form{flex-wrap:wrap}.chat-form .field,.profile-form .field{flex-basis:100%}}
+
+/* Expandable community/account panel */
+.drawer-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.drawer-tab{border:1px solid var(--line);background:#17171e;color:#c8c8d2;border-radius:9px;padding:10px 14px;font-size:13px;font-weight:700}
+.drawer-tab:hover,.drawer-tab.active{border-color:var(--red);background:#2a141b;color:#fff}
+.drawer-content{max-width:620px;padding:8px 2px 4px}
+.drawer-content h3{margin:8px 0;font-size:22px}
+.drawer-form{display:grid;gap:12px;margin:18px 0}
+.drawer-form label{display:grid;gap:7px;color:#d9d9e2;font-size:13px}
+.drawer-form .primary{justify-self:start}
+.text-link{display:inline-flex;border:0;background:transparent;color:#ff8794;text-decoration:underline;padding:8px 0;font-size:13px;cursor:pointer}
+.drawer-station{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:8px}
+@media(max-width:500px){.drawer-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.drawer-tab{padding:11px 8px}.drawer-form .primary{width:100%}}
