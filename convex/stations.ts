@@ -101,7 +101,7 @@ export const list = query({
 
     return rows
       .filter((station) => station.lastCheckOk)
-      .filter((station) => !tag || station.tags.some((value) => value.includes(tag)))
+      .filter((station) => !tag || station.tags.some((value: string) => value.includes(tag)))
       .slice(0, limit)
       .map((station) => ({
         id: `radio-browser-${station.stationUuid}`,
