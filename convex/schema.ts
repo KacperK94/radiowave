@@ -21,4 +21,33 @@ export default defineSchema({
     city: v.optional(v.string()),
     updatedAt: v.number(),
   }).index("by_nickname", ["nickname"]),
+  stations: defineTable({
+    stationUuid: v.string(),
+    name: v.string(),
+    searchText: v.string(),
+    streamUrl: v.string(),
+    homepage: v.optional(v.string()),
+    favicon: v.optional(v.string()),
+    country: v.optional(v.string()),
+    countryCode: v.optional(v.string()),
+    state: v.optional(v.string()),
+    languages: v.array(v.string()),
+    tags: v.array(v.string()),
+    codec: v.optional(v.string()),
+    bitrate: v.number(),
+    votes: v.number(),
+    clickCount: v.number(),
+    lastCheckOk: v.boolean(),
+    lastCheckTime: v.number(),
+    source: v.string(),
+    importedAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_stationUuid", ["stationUuid"])
+    .index("by_countryCode", ["countryCode"])
+    .index("by_clickCount", ["clickCount"])
+    .searchIndex("search_station_text", {
+      searchField: "searchText",
+      filterFields: ["countryCode"],
+    }),
 });
