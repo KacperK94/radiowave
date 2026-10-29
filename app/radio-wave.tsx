@@ -225,7 +225,7 @@ export default function RadioWaveApp({ backendEnabled }: { backendEnabled: boole
         <header className="nav">
           <a href="#" className="brand" aria-label="RadioWave — strona główna"><span className="brand-mark"><Radio size={23} /></span><span>Radio<em>Wave</em></span></a>
           <nav className="nav-links" aria-label="Nawigacja główna"><a href="#stations">STACJE</a><a href="#community">SPOŁECZNOŚĆ</a><a href="#profile">PROFIL</a></nav>
-          <button className="secondary" aria-expanded={adminOpen} aria-controls="radiowave-drawer" onClick={() => setAdminOpen((open) => !open)}><Settings2 size={15} /> Panel</button>
+          <button className="secondary" aria-expanded={adminOpen} aria-controls="radiowave-drawer" onClick={() => setAdminOpen((open) => !open)}><Settings2 size={15} /> Konto</button>
         </header>
 
         <main>
@@ -234,7 +234,7 @@ export default function RadioWaveApp({ backendEnabled }: { backendEnabled: boole
               <div className="pill"><span className="live-dot" /> INTERNET RADIO & COMMUNITY</div>
               <h1>Twoje radio.<br />Twoja <span>scena.</span></h1>
               <p>Odkrywaj dźwięki, poznawaj ludzi i znajdź swoją częstotliwość. Stary internetowy klimat, nowa fala muzyki. Wciśnij play i zostań na dłużej.</p>
-              <div className="hero-actions"><a className="primary" href="#stations"><Play size={16} fill="currentColor" /> Odkryj stacje</a><a className="secondary" href="#shoutbox"><Users size={16} /> Wbij na shoutbox</a></div>
+              <div className="hero-actions"><a className="primary" href="#stations"><Play size={16} fill="currentColor" /> Odkryj stacje</a><button className="secondary" onClick={() => { setPanelSection("shoutbox"); setAdminOpen(true); window.setTimeout(() => document.getElementById("radiowave-drawer")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0); }}><Users size={16} /> Wbij na shoutbox</button></div>
               <div style={{ display: "flex", gap: 20, flexWrap: "wrap", marginTop: 27, color: "#a5a5b2", fontSize: 12 }}><span><Signal size={14} style={{ display: "inline", verticalAlign: "middle", color: "var(--green)" }} /> Radio bez granic</span><span><Headphones size={14} style={{ display: "inline", verticalAlign: "middle", color: "var(--red)" }} /> Muzyka non stop</span><span><Sparkles size={14} style={{ display: "inline", verticalAlign: "middle", color: "#f6bd5a" }} /> Retro vibe</span></div>
             </div>
             <div className="record-stage" aria-label={playing ? "Płyta winylowa obraca się podczas odtwarzania" : "Płyta winylowa czeka na odtworzenie"}>
